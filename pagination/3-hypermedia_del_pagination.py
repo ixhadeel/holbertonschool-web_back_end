@@ -41,26 +41,23 @@ class Server:
                         page_size: int = 10) -> Dict:
         """Return a deletion-resilient page."""
         indexed_data = self.indexed_dataset()
-        data_length = len(indexed_data)
 
-        assert index is not None and 0 <= index <= data_length
+        assert index is not None and isinstance(index, int)
+        assert 0 <= index < len(indexed_data)
 
         data = []
         current_index = index
-        count = 0
 
-        while count < page_size and current_index < data_length:
-            row = indexed_data.get(current_index)
-
-            if row is not None:
-                data.append(row)
-                count += 1
+        while (len(data) < page_size and
+               current_index < len(self.dataset())):
+            if current_index in indexed_data:
+                data.append(indexed_data[current_index])
 
             current_index += 1
 
         return {
             "index": index,
-            "next_index": current_index,
+            "data": data,
             "page_size": len(data),
-            "data": data
+            "next_index": current_index
         }
