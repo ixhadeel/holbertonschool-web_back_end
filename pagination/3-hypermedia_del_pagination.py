@@ -11,12 +11,12 @@ class Server:
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self):
-        """Initialize the datasets."""
+        """Initialize datasets."""
         self.__dataset = None
         self.__indexed_dataset = None
 
     def dataset(self) -> List[List]:
-        """Return the cached dataset."""
+        """Return cached dataset."""
         if self.__dataset is None:
             with open(self.DATA_FILE) as f:
                 reader = csv.reader(f)
@@ -26,7 +26,7 @@ class Server:
         return self.__dataset
 
     def indexed_dataset(self) -> Dict[int, List]:
-        """Return the dataset indexed by position."""
+        """Return dataset indexed by position."""
         if self.__indexed_dataset is None:
             dataset = self.dataset()
             self.__indexed_dataset = {
@@ -38,17 +38,19 @@ class Server:
     def get_hyper_index(self, index: int = None,
                         page_size: int = 10) -> Dict:
         """Return a deletion-resilient page."""
+        assert index is None or (
+            isinstance(index, int)
+            and 0 <= index < len(self.dataset())
+        )
+
         if index is None:
             index = 0
-
-        assert isinstance(index, int)
-        assert 0 <= index < len(self.dataset())
 
         data = []
         indexed_data = self.indexed_dataset()
         next_index = index
 
-        while len(data) < page_size and next_index < len(self.dataset()):
+        while len(data) < page_size:
             if next_index in indexed_data:
                 data.append(indexed_data[next_index])
 
