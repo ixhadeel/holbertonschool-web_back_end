@@ -3,7 +3,7 @@
 
 import csv
 import math
-from typing import List, Dict
+from typing import Dict, List
 
 
 class Server:
@@ -47,17 +47,20 @@ class Server:
 
         data = []
         current_index = index
+        count = 0
 
-        while (len(data) < page_size and
-               current_index < data_length):
-            if current_index in indexed_data:
-                data.append(indexed_data[current_index])
+        while count < page_size and current_index < data_length:
+            row = indexed_data.get(current_index)
+
+            if row is not None:
+                data.append(row)
+                count += 1
 
             current_index += 1
 
         return {
             "index": index,
-            "data": data,
+            "next_index": current_index,
             "page_size": len(data),
-            "next_index": current_index
+            "data": data
         }
