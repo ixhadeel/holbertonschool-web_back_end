@@ -43,9 +43,7 @@ class Server:
         indexed_data = self.indexed_dataset()
         data_length = len(indexed_data)
 
-        assert index is not None
-        assert isinstance(index, int)
-        assert 0 <= index <= data_length
+        assert index is not None and 0 <= index <= data_length
 
         data = []
         current_index = index
